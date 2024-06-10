@@ -1,4 +1,4 @@
-package tinyfaas
+package go_tinyfaas
 
 import (
 	"bytes"
