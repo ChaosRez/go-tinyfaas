@@ -4,12 +4,16 @@ go-tinyfaas
 
 ## Usage
 ```go
+const functionsPath = "../faas/tinyfaas/" // a local path of functions, e.g. tinyfaas directory
 // initialize tinyFaaS manager instance
-tf := TinyFaaS.New("localhost", "8080")
+tf := TinyFaaS.New("localhost", "8080", functionsPath)  // tinyFaaS's management port address is 8080 by default
 
-// upload a function
+// upload a function from local, assuming the function is in the functionsPath by default
 respU, err := tf.UploadLocal("sieve", "test/fns/sieve-of-eratosthenes", "nodejs", 1)
-//respU, err := tf.UploadURL("sieve", "tinyFaaS-main/test/fns/sieve-of-eratosthenes", "nodejs", 1, "https://github.com/OpenFogStack/tinyFaas/archive/main.zip")
+// upload a function from local with full path, and environment variables
+respU, err := tf.UploadLocal("sieve", "full-path/to/sieve-of-eratosthenes", "nodejs", 1, true, args)
+// upload a function from a remote URL
+respU, err := tf.UploadURL("sieve", "tinyFaaS-main/test/fns/sieve-of-eratosthenes", "nodejs", 1, "https://github.com/OpenFogStack/tinyFaas/archive/main.zip")
 
 // Check tinyFaaS response. (inc. timeout, ok, other errors?)
 if err != nil {
@@ -43,5 +47,8 @@ fmt.Printf("functions: %s\n", respF)
 
 // remove all functions
 tf.WipeFunctions()
+
+// call a function
+tf.Call("sieve", "10")
 
 ```
