@@ -1,4 +1,4 @@
-module go-tinyfaas
+module tinyfaas
 
 go 1.22
 
