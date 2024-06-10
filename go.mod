@@ -1,4 +1,4 @@
-module tinyfaas
+module github.com/ChaosRez/go-tinyfaas
 
 go 1.22
 
