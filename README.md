@@ -56,3 +56,7 @@ tf.WipeFunctions()
 tf.Call("sieve", "10")
 
 ```
+
+## Contributing and License
+Pull requests are welcome. If you inspire this project to create your own tinyFaaS wrapper in other languages, please mention this project.  
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
