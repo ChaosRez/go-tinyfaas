@@ -4,9 +4,13 @@ go-tinyfaas
 
 ## Usage
 ```go
-const functionsPath = "../faas/tinyfaas/" // a local path of functions, e.g. tinyfaas directory
+import TinyFaaS "github.com/ChaosRez/go-tinyfaas"
+
+// set a local path of functions, e.g. tinyfaas directory
+const functionsPath = "../faas/tinyfaas/" 
+
 // initialize tinyFaaS manager instance
-tf := TinyFaaS.New("localhost", "8080", functionsPath)  // tinyFaaS's management port address is 8080 by default
+tf := TinyFaaS.New("localhost", "8080", functionsPath)  // management port is 8080 by default
 
 // upload a function from local, assuming the function is in the functionsPath by default
 respU, err := tf.UploadLocal("sieve", "test/fns/sieve-of-eratosthenes", "nodejs", 1)
@@ -15,7 +19,7 @@ respU, err := tf.UploadLocal("sieve", "full-path/to/sieve-of-eratosthenes", "nod
 // upload a function from a remote URL
 respU, err := tf.UploadURL("sieve", "tinyFaaS-main/test/fns/sieve-of-eratosthenes", "nodejs", 1, "https://github.com/OpenFogStack/tinyFaas/archive/main.zip")
 
-// Check tinyFaaS response. (inc. timeout, ok, other errors?)
+// Check tinyFaaS response. (incl. timeout, ok, other errors?)
 if err != nil {
 log.Fatalln("error when calling tinyFaaS: ", err)
 }
@@ -25,7 +29,7 @@ log.Infof("upload success:\n%s", respU) // 200 success, 400 bad request
 // delete a function
 errD := tf.Delete("sieve")
 
-// Check tinyFaaS response. (inc. timeout, ok, other errors?)
+// Check tinyFaaS response. (incl. timeout, ok, other errors?)
 if errD != nil {
 log.Fatalln("error when calling tinyFaaS: ", errD)
 }
@@ -33,7 +37,7 @@ log.Fatalln("error when calling tinyFaaS: ", errD)
 // get results log
 respL, errL := tf.ResultsLog()
 
-// Check tinyFaaS response. (inc. timeout, ok, other errors?)
+// Check tinyFaaS response. (incl. timeout, ok, other errors?)
 if errL != nil {
 log.Fatalln("error when calling tinyFaaS: ", errL)
 }
@@ -48,7 +52,7 @@ fmt.Printf("functions: %s\n", respF)
 // remove all functions
 tf.WipeFunctions()
 
-// call a function
+// call a function by value
 tf.Call("sieve", "10")
 
 ```
