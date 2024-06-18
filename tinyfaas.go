@@ -266,7 +266,7 @@ func checkResponse(fn func() (*resty.Response, error)) (string, error) {
 		return "", err
 	}
 	if !resp.IsSuccess() {
-		msg := fmt.Sprintf("non-successful response (%d)", resp.StatusCode())
+		msg := fmt.Sprintf("non-successful response (%d): resp: ()%v", resp.StatusCode(), resp.Body())
 		return "", errors.New(msg)
 	}
 	return string(resp.Body()), nil
