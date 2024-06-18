@@ -1,6 +1,7 @@
 go-tinyfaas
 ----------------
 [tinyFaaS](https://github.com/OpenFogStack/tinyFaaS) wrapper to manage and deploy functions to a remote tinyFaaS server.
+- https://pkg.go.dev/github.com/ChaosRez/go-tinyfaas
 
 ## Usage
 ```go
