@@ -8,6 +8,7 @@ import (
 	"github.com/go-resty/resty/v2"
 	log "github.com/sirupsen/logrus"
 	"os/exec"
+	"time"
 )
 
 type TinyFaaS struct {
@@ -27,6 +28,8 @@ func New(host, port, path string) *TinyFaaS {
 func (tf *TinyFaaS) UploadLocal(funcName string, path string, env string, threads int, isFullPath bool, args []string) (string, error) {
 	//wiki: curl http://localhost:8080/upload --data "{\"name\": \"$2\", \"env\": \"$3\", \"threads\": $4, \"zip\": \"$(zip -r - ./* | base64 | tr -d '\n')\"}"
 	//wiki: ./scripts/upload.sh "test/fns/sieve-of-eratosthenes" "sieve" "nodejs" 1
+
+	start := time.Now()
 
 	// parse the function source code to base64
 	cmdStr := "zip -r - ./* | base64 | tr -d '\n'"
@@ -78,13 +81,16 @@ func (tf *TinyFaaS) UploadLocal(funcName string, path string, env string, thread
 		log.Errorf("Error uploading '%s' function via local func: %v. path: %v", funcName, err, cmd.Dir)
 		return "", err
 	}
-	log.Infof("'%s' deployed successfully \n", funcName)
+	elapsed := time.Since(start)
+	log.Infof("'%s' deployed successfully (%v)", funcName, elapsed)
 	return resp, nil
 }
 
 func (tf *TinyFaaS) UploadURL(funcName string, subPath string, env string, threads int, url string, args []string) (string, error) {
 	//wiki: curl http://localhost:8080/uploadURL --data "{\"name\": \"$3\", \"env\": \"$4\",\"threads\": $5,\"url\": \"$1\",\"subfolder_path\": \"$2\"}"
 	//wiki: uploadURL.sh "https://github.com/OpenFogStack/tinyFaas/archive/main.zip" "tinyFaaS-main/test/fns/sieve-of-eratosthenes" "sieve" "nodejs" 1
+
+	start := time.Now()
 
 	// make a resty client
 	client := resty.New()
@@ -121,12 +127,15 @@ func (tf *TinyFaaS) UploadURL(funcName string, subPath string, env string, threa
 	if err != nil {
 		log.Fatalf("Error uploading '%s' function via URL: %v", funcName, err)
 	}
-	log.Infof("'%s' deployed successfully \n", funcName)
+	elapsed := time.Since(start)
+	log.Infof("'%s' deployed successfully (%v)", funcName, elapsed)
 	return resp, nil
 }
 
 func (tf *TinyFaaS) Delete(funcName string) error {
 	//wiki: curl http://localhost:8080/delete --data "{\"name\": \"$1\"}"
+
+	start := time.Now()
 
 	// make a resty client
 	client := resty.New()
@@ -158,7 +167,8 @@ func (tf *TinyFaaS) Delete(funcName string) error {
 	if err != nil {
 		log.Fatalf("Error when deleting '%s' function: %v", funcName, err)
 	}
-	log.Infof("deleting '%s' function success \n", funcName)
+	elapsed := time.Since(start)
+	log.Infof("deleted '%s' function (%v) \n", funcName, elapsed)
 	return nil
 }
 
@@ -186,6 +196,9 @@ func (tf *TinyFaaS) ResultsLog() (string, error) {
 }
 
 func (tf *TinyFaaS) WipeFunctions() {
+
+	start := time.Now()
+
 	// make a resty client
 	client := resty.New()
 
@@ -205,7 +218,8 @@ func (tf *TinyFaaS) WipeFunctions() {
 	if err != nil {
 		log.Fatalf("Error when wiping functions: %v", err)
 	}
-	log.Info("wiping functions success")
+	elapsed := time.Since(start)
+	log.Infof("wiped functions (%v)", elapsed)
 	return
 
 }
@@ -235,6 +249,9 @@ func (tf *TinyFaaS) Functions() string {
 }
 
 func (tf *TinyFaaS) Call(funcName string, data string) string { // Note: sample call function,
+
+	start := time.Now()
+
 	// make a resty client
 	client := resty.New()
 
@@ -255,7 +272,8 @@ func (tf *TinyFaaS) Call(funcName string, data string) string { // Note: sample 
 	if err != nil {
 		log.Fatalf("Error when calling '%v': %v", funcName, err)
 	}
-	log.Infof("resp: %s", resp)
+	elapsed := time.Since(start)
+	log.Infof("resp (%v): %s", elapsed, resp)
 	return resp
 }
 
