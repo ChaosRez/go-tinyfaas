@@ -78,8 +78,7 @@ func (tf *TinyFaaS) UploadLocal(funcName string, path string, env string, thread
 	// validate the response
 	resp, err := checkResponse(callResponse)
 	if err != nil {
-		log.Errorf("Error uploading '%s' function via local func: %v. path: %v", funcName, err, cmd.Dir)
-		return "", err
+		return "", fmt.Errorf("error uploading '%s' function via local func: %v. path: %v", funcName, err, cmd.Dir)
 	}
 	elapsed := time.Since(start)
 	log.Infof("'%s' deployed successfully (%v)", funcName, elapsed)
@@ -106,8 +105,7 @@ func (tf *TinyFaaS) UploadURL(funcName string, subPath string, env string, threa
 	}
 	jsonBody, err := json.Marshal(params)
 	if err != nil {
-		log.Errorf("Error marshaling JSON: %v", err)
-		return "", err
+		return "", fmt.Errorf("error marshaling JSON: %v", err)
 	}
 
 	// call and get the response
@@ -125,7 +123,7 @@ func (tf *TinyFaaS) UploadURL(funcName string, subPath string, env string, threa
 	// validate the response
 	resp, err := checkResponse(callResponse)
 	if err != nil {
-		log.Fatalf("Error uploading '%s' function via URL: %v", funcName, err)
+		return resp, fmt.Errorf("Error uploading '%s' function via URL: %v", funcName, err)
 	}
 	elapsed := time.Since(start)
 	log.Infof("'%s' deployed successfully (%v)", funcName, elapsed)
@@ -146,8 +144,7 @@ func (tf *TinyFaaS) Delete(funcName string) error {
 	}
 	jsonBody, err := json.Marshal(params)
 	if err != nil {
-		log.Errorf("Error marshaling JSON: %v", err)
-		return err
+		return fmt.Errorf("Error marshaling JSON: %v", err)
 	}
 
 	// call and get the response
@@ -165,7 +162,7 @@ func (tf *TinyFaaS) Delete(funcName string) error {
 	// validate the response
 	_, err = checkResponse(callResponse)
 	if err != nil {
-		log.Fatalf("Error when deleting '%s' function: %v", funcName, err)
+		return fmt.Errorf("Error when deleting '%s' function: %v", funcName, err)
 	}
 	elapsed := time.Since(start)
 	log.Infof("deleted '%s' function (%v) \n", funcName, elapsed)
@@ -190,12 +187,12 @@ func (tf *TinyFaaS) ResultsLog() (string, error) {
 	// validate the response
 	resp, err := checkResponse(callResponse)
 	if err != nil {
-		log.Fatalf("Error when getting results log: %v", err)
+		return resp, fmt.Errorf("Error when getting results log: %v", err)
 	}
 	return resp, err
 }
 
-func (tf *TinyFaaS) WipeFunctions() {
+func (tf *TinyFaaS) WipeFunctions() error {
 
 	start := time.Now()
 
@@ -216,16 +213,15 @@ func (tf *TinyFaaS) WipeFunctions() {
 	// validate the response
 	_, err := checkResponse(callResponse)
 	if err != nil {
-		log.Fatalf("Error when wiping functions: %v", err)
+		return fmt.Errorf("error when wiping functions: %v", err)
 	}
 	elapsed := time.Since(start)
 	log.Infof("wiped functions (%v)", elapsed)
-	return
-
+	return nil
 }
 
 // Functions lists available functions
-func (tf *TinyFaaS) Functions() string {
+func (tf *TinyFaaS) Functions() (string, error) {
 	// make a resty client
 	client := resty.New()
 
@@ -243,12 +239,12 @@ func (tf *TinyFaaS) Functions() string {
 	// validate the response
 	resp, err := checkResponse(callResponse)
 	if err != nil {
-		log.Fatalf("Error when getting functions list: %v", err)
+		return resp, fmt.Errorf("error when getting functions list: %v", err)
 	}
-	return resp
+	return resp, nil
 }
 
-func (tf *TinyFaaS) Call(funcName string, data string) string { // Note: sample call function,
+func (tf *TinyFaaS) Call(funcName string, data string) (string, error) { // Note: sample call function,
 
 	start := time.Now()
 
@@ -270,11 +266,11 @@ func (tf *TinyFaaS) Call(funcName string, data string) string { // Note: sample 
 	// validate the response
 	resp, err := checkResponse(callResponse)
 	if err != nil {
-		log.Fatalf("Error when calling '%v': %v", funcName, err)
+		return "", err
 	}
 	elapsed := time.Since(start)
 	log.Infof("resp (%v): %s", elapsed, resp)
-	return resp
+	return resp, nil
 }
 
 // Private
