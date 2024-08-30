@@ -81,7 +81,7 @@ func (tf *TinyFaaS) UploadLocal(funcName string, path string, env string, thread
 		return "", fmt.Errorf("error uploading '%s' function via local func: %v. path: %v", funcName, err, cmd.Dir)
 	}
 	elapsed := time.Since(start)
-	log.Infof("'%s' deployed successfully (%v)", funcName, elapsed)
+	log.Infof("(%s) '%s' deployed successfully (%v)", env, funcName, elapsed)
 	return resp, nil
 }
 
@@ -126,7 +126,7 @@ func (tf *TinyFaaS) UploadURL(funcName string, subPath string, env string, threa
 		return resp, fmt.Errorf("Error uploading '%s' function via URL: %v", funcName, err)
 	}
 	elapsed := time.Since(start)
-	log.Infof("'%s' deployed successfully (%v)", funcName, elapsed)
+	log.Infof("(%s) '%s' deployed successfully (%v)", env, funcName, elapsed)
 	return resp, nil
 }
 
@@ -280,7 +280,7 @@ func checkResponse(fn func() (*resty.Response, error)) (string, error) {
 		return "", err
 	}
 	if !resp.IsSuccess() {
-		msg := fmt.Sprintf("non-successful response (%d): resp: ()%v", resp.StatusCode(), resp.Body())
+		msg := fmt.Sprintf("(%d) non-successful response. body: %v", resp.StatusCode(), resp.Body())
 		return "", errors.New(msg)
 	}
 	return string(resp.Body()), nil
